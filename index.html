@@ -413,6 +413,24 @@
             
             const categories = ["Other", "Character", "Place", "Item", "Spell", "Letter", "Background Info", "World Info", "Rule"];
 
+            // --- Функции LocalStorage ---
+            function saveToLocalStorage() {
+                localStorage.setItem('cyber-lorebook-data', JSON.stringify(lorebookData));
+            }
+
+            function loadFromLocalStorage() {
+                const savedData = localStorage.getItem('cyber-lorebook-data');
+                if (savedData) {
+                    try {
+                        return JSON.parse(savedData);
+                    } catch (e) {
+                        console.error("Ошибка парсинга данных лорбука из localStorage", e);
+                        return null;
+                    }
+                }
+                return null;
+            }
+
             function showConfirmation(message, onConfirm) {
                 modalMessage.textContent = message;
                 confirmationModal.classList.remove('modal-hidden');
@@ -547,12 +565,14 @@
                     useRegex: false
                 };
                 lorebookData.push(newEntry);
+                saveToLocalStorage();
                 updateUI();
                 entriesContainer.scrollTop = entriesContainer.scrollHeight;
             }
 
             function deleteEntry(index) {
                 lorebookData.splice(index, 1);
+                saveToLocalStorage();
                 updateUI();
             }
             
@@ -567,6 +587,7 @@
                         lorebookData[index][field] = value.value;
                     }
                     renderViewer();
+                    saveToLocalStorage();
                 }
             }
 
@@ -594,6 +615,7 @@
                                 mode: entry.mode || "normal",
                                 useRegex: entry.useRegex || false
                             }));
+                            saveToLocalStorage();
                             updateUI();
                         } else {
                             alert('Ошибка: JSON файл имеет неверную структуру.');
@@ -639,6 +661,7 @@
             newLorebookBtn.addEventListener('click', () => {
                 showConfirmation('Вы уверены, что хотите создать новый лорбук? Все несохраненные изменения будут потеряны.', () => {
                     lorebookData = [];
+                    saveToLocalStorage(); // Очищаем хранилище
                     updateUI();
                     hideConfirmation();
                 });
@@ -686,8 +709,17 @@
             modalCancelBtn.addEventListener('click', hideConfirmation);
 
             // --- Initialization ---
-            lorebookData = initialData;
-            updateUI();
+            function initialize() {
+                const savedLorebook = loadFromLocalStorage();
+                if (savedLorebook && savedLorebook.length > 0) {
+                    lorebookData = savedLorebook;
+                } else {
+                    lorebookData = initialData;
+                }
+                updateUI();
+            }
+
+            initialize();
         });
     </script>
 </body>
