@@ -29,13 +29,10 @@
             font-family: 'Orbitron', sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
-            overflow: hidden;
             margin: 0;
         }
 
         /* --- Анимации --- */
-        
-
         @keyframes pulse-glow {
             0%, 100% {
                 text-shadow: 0 0 5px var(--header-color), 0 0 10px var(--header-color), 0 0 15px var(--header-color);
@@ -61,7 +58,7 @@
         ::-webkit-scrollbar-thumb { background: var(--primary-neon); box-shadow: 0 0 5px var(--primary-neon); }
 
         /* --- Основная структура --- */
-        .main-container { display: flex; flex-direction: column; height: 100vh; }
+        .main-container { display: flex; flex-direction: column; min-height: 100vh; }
         .main-header {
             background-color: var(--panel-bg);
             padding: 1rem;
@@ -70,6 +67,7 @@
             justify-content: space-between;
             border-bottom: 2px solid var(--border-color);
             box-shadow: 0 0 15px rgba(0, 229, 255, 0.2);
+            flex-wrap: wrap;
         }
         .main-header h1 {
             font-size: 1.5rem;
@@ -85,10 +83,17 @@
             grid-template-columns: 1fr;
             gap: 1rem;
             padding: 1rem;
-            overflow: hidden;
         }
         @media (min-width: 768px) {
-            main { grid-template-columns: 1fr 1fr; }
+            main { 
+                grid-template-columns: 1fr 1fr; 
+                overflow: hidden;
+                height: calc(100vh - 80px); /* Высота хедера */
+            }
+            .main-container {
+                height: 100vh;
+                overflow: hidden;
+            }
         }
 
         .panel {
@@ -98,6 +103,7 @@
             flex-direction: column;
             overflow: hidden;
             clip-path: polygon(0 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%);
+            min-height: 400px;
         }
         .panel-header {
             padding: 1rem;
@@ -105,9 +111,11 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
         }
-        .panel-header h2 { font-size: 1.2rem; font-weight: 600; }
-        .panel-content { padding: 1rem; overflow-y: auto; }
+        .panel-header h2 { font-size: 1.2rem; font-weight: 600; margin: 0; }
+        .panel-content { padding: 1rem; overflow-y: auto; flex-grow: 1; }
         
         /* --- Стили кнопок (Cyberpunk) --- */
         .cyber-button {
@@ -176,7 +184,7 @@
         .entry-card {
             background-color: rgba(13, 12, 29, 0.7);
             padding: 1rem;
-            padding-right: 2.2rem; /* Исправление бага с обрезкой */
+            padding-right: 2.2rem;
             border: 1px solid var(--border-color);
             clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 0 100%);
             margin-bottom: 1rem;
@@ -191,7 +199,7 @@
             border: 1px solid var(--border-color);
             padding: 0.5rem;
             color: var(--text-color);
-            font-family: 'Inter', sans-serif; /* Новый шрифт для читаемости */
+            font-family: 'Inter', sans-serif;
             outline: none;
             transition: all 0.3s ease;
             margin-bottom: 0.75rem;
@@ -211,9 +219,7 @@
             gap: 1rem;
             margin-top: 1rem;
         }
-        .settings-grid > div {
-            flex: 1;
-        }
+        .settings-grid > div { flex: 1; }
 
         /* --- Toggle Switch --- */
         .toggle-switch { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
@@ -254,13 +260,13 @@
         .viewer-entry p { 
             white-space: pre-wrap; 
             line-height: 1.6; 
-            font-family: 'Inter', sans-serif; /* Новый шрифт для читаемости */
+            font-family: 'Inter', sans-serif;
         }
         pre { 
             white-space: pre-wrap; 
             word-break: break-all; 
             font-size: 0.9rem;
-            font-family: 'Inter', sans-serif; /* Новый шрифт для читаемости */
+            font-family: 'Inter', sans-serif;
         }
 
         /* --- Модальное окно --- */
@@ -280,6 +286,25 @@
         .modal-buttons { display: flex; justify-content: flex-end; gap: 1rem; }
         
         .hidden-input { display: none; }
+
+        /* --- Адаптивность --- */
+        @media (max-width: 767px) {
+            .main-header {
+                flex-direction: column;
+                align-items: center;
+                gap: 1rem;
+            }
+            .header-buttons {
+                justify-content: center;
+            }
+            .cyber-button {
+                padding: 0.5rem 0.8rem;
+                font-size: 0.8rem;
+            }
+            .panel-header h2 {
+                font-size: 1.1rem;
+            }
+        }
     </style>
 </head>
 <body>
