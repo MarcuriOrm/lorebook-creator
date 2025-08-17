@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lorebook Creator - Cyberpunk Edition</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Inter:wght@400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0d0c1d;
+            --panel-bg: #1a1a2e;
+            --border-color: rgba(0, 229, 255, 0.3);
+            --text-color: #e0e0e0;
+            --header-color: #00e5ff;
+            --primary-neon: #00e5ff;
+            --secondary-neon: #ff05f7;
+            --green-neon: #00ff9b;
+            --red-neon: #ff1b48;
+            --indigo-neon: #8A2BE2;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Orbitron', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow: hidden;
+            margin: 0;
+        }
+
+        /* --- Анимации --- */
+        
+
+        @keyframes pulse-glow {
+            0%, 100% {
+                text-shadow: 0 0 5px var(--header-color), 0 0 10px var(--header-color), 0 0 15px var(--header-color);
+                border-color: rgba(0, 229, 255, 0.3);
+            }
+            50% {
+                text-shadow: 0 0 10px var(--header-color), 0 0 20px var(--header-color), 0 0 30px var(--header-color);
+                border-color: rgba(0, 229, 255, 0.8);
+            }
+        }
+        
+        @keyframes glitch-animation {
+            0% { clip-path: inset(25% 0 50% 0); transform: translate(-3px, 0); }
+            25% { clip-path: inset(5% 0 80% 0); transform: translate(3px, 3px); }
+            50% { clip-path: inset(60% 0 10% 0); transform: translate(-3px, -3px); }
+            75% { clip-path: inset(40% 0 20% 0); transform: translate(3px, 0); }
+            100% { clip-path: inset(25% 0 50% 0); transform: translate(-3px, 3px); }
+        }
+
+        /* --- Кастомный скроллбар --- */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #1a1a2e; }
+        ::-webkit-scrollbar-thumb { background: var(--primary-neon); box-shadow: 0 0 5px var(--primary-neon); }
+
+        /* --- Основная структура --- */
+        .main-container { display: flex; flex-direction: column; height: 100vh; }
+        .main-header {
+            background-color: var(--panel-bg);
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 2px solid var(--border-color);
+            box-shadow: 0 0 15px rgba(0, 229, 255, 0.2);
+        }
+        .main-header h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--header-color);
+            animation: pulse-glow 3s infinite ease-in-out;
+        }
+        .header-buttons { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+        
+        main {
+            flex-grow: 1;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            padding: 1rem;
+            overflow: hidden;
+        }
+        @media (min-width: 768px) {
+            main { grid-template-columns: 1fr 1fr; }
+        }
+
+        .panel {
+            background-color: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%);
+        }
+        .panel-header {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .panel-header h2 { font-size: 1.2rem; font-weight: 600; }
+        .panel-content { padding: 1rem; overflow-y: auto; }
+        
+        /* --- Стили кнопок (Cyberpunk) --- */
+        .cyber-button {
+            position: relative;
+            padding: 0.6rem 1.2rem;
+            border: none;
+            background-color: transparent;
+            color: var(--text-color);
+            font-size: 0.9rem;
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+            cursor: pointer;
+            outline: none;
+            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%);
+            transition: color 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .cyber-button::before, .cyber-button::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: -1;
+            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%);
+            transition: all 0.3s ease;
+        }
+        .cyber-button::before {
+            background: var(--panel-bg);
+            border: 1px solid var(--primary-neon);
+        }
+        .cyber-button::after {
+             background: linear-gradient(45deg, var(--secondary-neon), var(--primary-neon));
+             opacity: 0;
+        }
+        .cyber-button:hover::after { opacity: 1; }
+        .cyber-button:hover { color: var(--bg-color); }
+        .cyber-button:hover .glitch-text {
+            opacity: 1;
+            animation: glitch-animation 0.3s infinite;
+        }
+        .glitch-text {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; justify-content: center; align-items: center;
+            opacity: 0;
+            color: var(--primary-neon);
+            text-shadow: -1px -1px 0 var(--secondary-neon), 1px 1px 0 var(--primary-neon);
+            z-index: 3;
+        }
+        /* Цвета кнопок */
+        .btn-sky::before { border-color: var(--primary-neon); }
+        .btn-sky:hover .glitch-text { color: var(--primary-neon); }
+        .btn-green::before { border-color: var(--green-neon); }
+        .btn-green::after { background: linear-gradient(45deg, var(--secondary-neon), var(--green-neon)); }
+        .btn-green:hover .glitch-text { color: var(--green-neon); }
+        .btn-indigo::before { border-color: var(--indigo-neon); }
+        .btn-indigo::after { background: linear-gradient(45deg, var(--secondary-neon), var(--indigo-neon)); }
+        .btn-indigo:hover .glitch-text { color: var(--indigo-neon); }
+        .btn-red::before { border-color: var(--red-neon); }
+        .btn-red::after { background: linear-gradient(45deg, var(--secondary-neon), var(--red-neon)); }
+        .btn-secondary::before { border-color: var(--secondary-neon); }
+        .btn-secondary::after { background: linear-gradient(45deg, var(--primary-neon), var(--secondary-neon)); }
+        .btn-secondary:hover .glitch-text { color: var(--secondary-neon); }
+
+        /* --- Элементы редактора --- */
+        .entry-card {
+            background-color: rgba(13, 12, 29, 0.7);
+            padding: 1rem;
+            padding-right: 2.2rem; /* Исправление бага с обрезкой */
+            border: 1px solid var(--border-color);
+            clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 0 100%);
+            margin-bottom: 1rem;
+        }
+        .entry-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; }
+        .entry-header label, .input-label { font-weight: 600; color: var(--primary-neon); display: block; margin-bottom: 0.5rem; }
+        .delete-entry-btn { background: none; border: none; color: var(--text-color); cursor: pointer; padding: 0.25rem; }
+        .delete-entry-btn:hover { color: var(--red-neon); }
+        input[type="text"], input[type="number"], textarea, select {
+            width: 100%;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            padding: 0.5rem;
+            color: var(--text-color);
+            font-family: 'Inter', sans-serif; /* Новый шрифт для читаемости */
+            outline: none;
+            transition: all 0.3s ease;
+            margin-bottom: 0.75rem;
+        }
+        input[type="text"]:focus, input[type="number"]:focus, textarea:focus, select:focus {
+            border-color: var(--primary-neon);
+            box-shadow: 0 0 10px var(--primary-neon);
+        }
+        
+        textarea { resize: vertical; min-height: 100px; }
+        
+        .advanced-settings { display: none; margin-top: 1rem; border-top: 1px dashed var(--border-color); padding-top: 1rem; }
+        .advanced-settings.open { display: block; }
+        
+        .settings-grid {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        .settings-grid > div {
+            flex: 1;
+        }
+
+        /* --- Toggle Switch --- */
+        .toggle-switch { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+        .toggle-switch label { color: var(--text-color); font-size: 0.9rem; }
+        .switch { position: relative; display: inline-block; width: 50px; height: 24px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--bg-color); border: 1px solid var(--border-color); transition: .4s; }
+        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: var(--text-color); transition: .4s; }
+        input:checked + .slider { background-color: var(--primary-neon); box-shadow: 0 0 5px var(--primary-neon); border-color: var(--primary-neon); }
+        input:checked + .slider:before { transform: translateX(26px); background-color: var(--bg-color); }
+
+        /* --- Панель просмотра --- */
+        .viewer-toggle { display: flex; background-color: var(--bg-color); border: 1px solid var(--border-color); }
+        .viewer-toggle button {
+            padding: 0.5rem 0.75rem;
+            font-size: 0.8rem;
+            font-family: 'Orbitron', sans-serif;
+            background: transparent;
+            border: none;
+            color: var(--text-color);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .viewer-toggle button.active {
+            background-color: var(--primary-neon);
+            color: var(--bg-color);
+            box-shadow: 0 0 10px var(--primary-neon);
+        }
+        .viewer-entry h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary-neon);
+            border-bottom: 2px solid var(--primary-neon);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.75rem;
+            text-shadow: 0 0 5px var(--primary-neon);
+        }
+        .viewer-entry p { 
+            white-space: pre-wrap; 
+            line-height: 1.6; 
+            font-family: 'Inter', sans-serif; /* Новый шрифт для читаемости */
+        }
+        pre { 
+            white-space: pre-wrap; 
+            word-break: break-all; 
+            font-size: 0.9rem;
+            font-family: 'Inter', sans-serif; /* Новый шрифт для читаемости */
+        }
+
+        /* --- Модальное окно --- */
+        .modal-overlay { position: fixed; inset: 0; background-color: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 50; }
+        .modal-hidden { display: none; }
+        .modal-content {
+            background: var(--panel-bg);
+            padding: 2rem;
+            border: 2px solid var(--secondary-neon);
+            box-shadow: 0 0 25px var(--secondary-neon);
+            max-width: 400px;
+            width: 100%;
+            clip-path: polygon(0 15px, 15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%);
+        }
+        .modal-content h3 { font-size: 1.2rem; margin-bottom: 1rem; color: var(--secondary-neon); }
+        .modal-content p { margin-bottom: 1.5rem; }
+        .modal-buttons { display: flex; justify-content: flex-end; gap: 1rem; }
+        
+        .hidden-input { display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="main-container">
+        <!-- Header -->
+        <header class="main-header">
+            <h1>Lorebook Creator</h1>
+            <div class="header-buttons">
+                <button id="new-lorebook-btn" class="cyber-button btn-sky">
+                    <span class="button-text">Новый Лорбук</span>
+                    <span class="glitch-text">Очистить</span>
+                </button>
+                <label for="import-json" class="cyber-button btn-green">
+                    <span class="button-text">Импорт JSON</span>
+                    <span class="glitch-text">Загрузить</span>
+                </label>
+                <input type="file" id="import-json" class="hidden-input" accept=".json">
+                <button id="export-json-btn" class="cyber-button btn-indigo">
+                    <span class="button-text">Экспорт JSON</span>
+                    <span class="glitch-text">Сохранить</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main>
+            <!-- Editor Panel -->
+            <div id="editor-panel" class="panel">
+                <div class="panel-header">
+                    <h2>Редактор</h2>
+                    <button id="add-entry-btn" class="cyber-button btn-sky">
+                         <span class="button-text">Добавить запись</span>
+                         <span class="glitch-text">Создать</span>
+                    </button>
+                </div>
+                <div id="entries-container" class="panel-content">
+                    <!-- Записи лорбука будут здесь -->
+                </div>
+            </div>
+
+            <!-- Viewer Panel -->
+            <div id="viewer-panel" class="panel">
+                <div class="panel-header">
+                    <h2>Просмотр</h2>
+                    <div class="viewer-toggle">
+                        <button id="view-text-btn" class="active">Текст</button>
+                        <button id="view-json-btn">JSON</button>
+                    </div>
+                </div>
+                <div id="viewer-content" class="panel-content">
+                    <!-- Содержимое для просмотра будет здесь -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Модальное окно для подтверждения -->
+    <div id="confirmation-modal" class="modal-overlay modal-hidden">
+        <div class="modal-content">
+            <h3 id="modal-title">Подтверждение</h3>
+            <p id="modal-message">Вы уверены?</p>
+            <div class="modal-buttons">
+                <button id="modal-cancel" class="cyber-button">Отмена</button>
+                <button id="modal-confirm" class="cyber-button btn-red">Подтвердить</button>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const entriesContainer = document.getElementById('entries-container');
+            const viewerContent = document.getElementById('viewer-content');
+            const addEntryBtn = document.getElementById('add-entry-btn');
+            const newLorebookBtn = document.getElementById('new-lorebook-btn');
+            const importJsonInput = document.getElementById('import-json');
+            const exportJsonBtn = document.getElementById('export-json-btn');
+            const viewTextBtn = document.getElementById('view-text-btn');
+            const viewJsonBtn = document.getElementById('view-json-btn');
+            const confirmationModal = document.getElementById('confirmation-modal');
+            const modalConfirmBtn = document.getElementById('modal-confirm');
+            const modalCancelBtn = document.getElementById('modal-cancel');
+            const modalMessage = document.getElementById('modal-message');
+
+            let lorebookData = [];
+            let currentViewMode = 'text';
+            let actionToConfirm = null;
+
+            const initialData = [
+                {
+                    key: "Пример ключа",
+                    content: "Это описание для примера. Вы можете отредактировать его или добавить новые записи, чтобы начать создавать свой лорбук.",
+                    comment: "?? Это комментарий к записи",
+                    secondkey: "Пример, Начало",
+                    alwaysActive: true,
+                    selective: false,
+                    disabled: false,
+                    category: "Other",
+                    insertorder: 1,
+                    position: 0,
+                    mode: "normal",
+                    useRegex: false
+                }
+            ];
+            
+            const categories = ["Other", "Character", "Place", "Item", "Spell", "Letter", "Background Info", "World Info", "Rule"];
+
+            function showConfirmation(message, onConfirm) {
+                modalMessage.textContent = message;
+                confirmationModal.classList.remove('modal-hidden');
+                actionToConfirm = onConfirm;
+            }
+
+            function hideConfirmation() {
+                confirmationModal.classList.add('modal-hidden');
+                actionToConfirm = null;
+            }
+
+            function renderEditor() {
+                entriesContainer.innerHTML = '';
+                if (lorebookData.length === 0) {
+                    entriesContainer.innerHTML = `<div style="text-align: center; color: #666; padding: 2rem;">
+                        <p>// Лорбук пуст //</p>
+                        <p>// Нажмите "Добавить запись" для инициализации //</p>
+                    </div>`;
+                    return;
+                }
+                lorebookData.forEach((entry, index) => {
+                    const entryElement = document.createElement('div');
+                    entryElement.className = 'entry-card';
+                    
+                    const categoryOptions = categories.map(cat => `<option value="${cat}" ${entry.category === cat ? 'selected' : ''}>${cat}</option>`).join('');
+
+                    entryElement.innerHTML = `
+                        <div class="entry-header">
+                            <label>Основной ключ:</label>
+                            <button data-index="${index}" class="delete-entry-btn" title="Удалить запись">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                            </button>
+                        </div>
+                        <input type="text" data-index="${index}" data-field="key" value="${entry.key || ''}">
+                        
+                        <label class="input-label">Описание:</label>
+                        <textarea data-index="${index}" data-field="content">${entry.content || ''}</textarea>
+                        
+                        <div style="margin-top: 0.5rem;">
+                            <button class="cyber-button btn-secondary" data-index="${index}" data-action="toggle-settings" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">
+                                <span class="button-text">Настройки</span>
+                                <span class="glitch-text">Опции</span>
+                            </button>
+                        </div>
+
+                        <div class="advanced-settings" id="settings-${index}">
+                            <label class="input-label">Вторичные ключи (опционально):</label>
+                            <input type="text" data-index="${index}" data-field="secondkey" value="${entry.secondkey || ''}">
+
+                            <label class="input-label">Комментарий (опционально):</label>
+                            <input type="text" data-index="${index}" data-field="comment" value="${entry.comment || ''}">
+                            
+                            <label class="input-label">Категория:</label>
+                            <select data-index="${index}" data-field="category">${categoryOptions}</select>
+
+                            <div class="toggle-switch">
+                                <label>Постоянный (Always Active)</label>
+                                <label class="switch">
+                                    <input type="checkbox" data-index="${index}" data-field="alwaysActive" ${entry.alwaysActive ? 'checked' : ''}>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <div class="toggle-switch">
+                                <label>Выборочный (Selective)</label>
+                                <label class="switch">
+                                    <input type="checkbox" data-index="${index}" data-field="selective" ${entry.selective ? 'checked' : ''}>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <div class="toggle-switch">
+                                <label>Отключено (Disabled)</label>
+                                <label class="switch">
+                                    <input type="checkbox" data-index="${index}" data-field="disabled" ${entry.disabled ? 'checked' : ''}>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            
+                            <div class="settings-grid">
+                                <div>
+                                    <label class="input-label">Порядок (1-100):</label>
+                                    <input type="number" data-index="${index}" data-field="insertorder" value="${entry.insertorder || 0}">
+                                </div>
+                                <div>
+                                    <label class="input-label">Позиция (0-100):</label>
+                                    <input type="number" data-index="${index}" data-field="position" value="${entry.position || 0}">
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    entriesContainer.appendChild(entryElement);
+                });
+            }
+
+            function renderViewer() {
+                viewerContent.innerHTML = '';
+                if (currentViewMode === 'text') {
+                    if (lorebookData.length === 0) {
+                        viewerContent.innerHTML = `<div style="text-align: center; color: #666; padding: 2rem;">// Нет данных для отображения //</div>`;
+                        return;
+                    }
+                    const textHtml = lorebookData.map(entry => `
+                        <div class="viewer-entry" style="margin-bottom: 1.5rem;">
+                            <h3>${entry.key || 'Без ключа'}</h3>
+                            <p>${entry.content || 'Нет описания.'}</p>
+                        </div>
+                    `).join('');
+                    viewerContent.innerHTML = textHtml;
+                } else { // json view
+                    const jsonString = JSON.stringify({ type: "risu", ver: 1, data: lorebookData }, null, 2);
+                    viewerContent.innerHTML = `<pre><code>${jsonString}</code></pre>`;
+                }
+            }
+            
+            function updateUI() {
+                renderEditor();
+                renderViewer();
+            }
+
+            function addEntry() {
+                const newEntry = {
+                    key: `Новый ключ ${lorebookData.length + 1}`,
+                    content: "",
+                    comment: "",
+                    secondkey: "",
+                    alwaysActive: false,
+                    selective: false,
+                    disabled: false,
+                    category: "Other",
+                    insertorder: lorebookData.length + 1,
+                    position: 0,
+                    mode: "normal",
+                    useRegex: false
+                };
+                lorebookData.push(newEntry);
+                updateUI();
+                entriesContainer.scrollTop = entriesContainer.scrollHeight;
+            }
+
+            function deleteEntry(index) {
+                lorebookData.splice(index, 1);
+                updateUI();
+            }
+            
+            function updateEntryData(index, field, value, type) {
+                if (lorebookData[index]) {
+                    if (type === 'checkbox') {
+                        lorebookData[index][field] = value.checked;
+                    } else if (type === 'number') {
+                        lorebookData[index][field] = parseInt(value.value, 10) || 0;
+                    }
+                    else {
+                        lorebookData[index][field] = value.value;
+                    }
+                    renderViewer();
+                }
+            }
+
+            function importFromJson(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const json = JSON.parse(e.target.result);
+                        if (json && Array.isArray(json.data)) {
+                            // Добавляем недостающие поля с дефолтными значениями
+                            lorebookData = json.data.map(entry => ({
+                                key: entry.key || "",
+                                content: entry.content || "",
+                                comment: entry.comment || "",
+                                secondkey: entry.secondkey || "",
+                                alwaysActive: entry.alwaysActive || false,
+                                selective: entry.selective || false,
+                                disabled: entry.disabled || false,
+                                category: entry.category || "Other",
+                                insertorder: entry.insertorder || 0,
+                                position: entry.position || 0,
+                                mode: entry.mode || "normal",
+                                useRegex: entry.useRegex || false
+                            }));
+                            updateUI();
+                        } else {
+                            alert('Ошибка: JSON файл имеет неверную структуру.');
+                        }
+                    } catch (error) {
+                        alert(`Ошибка при чтении JSON файла: ${error.message}`);
+                    }
+                };
+                reader.readAsText(file);
+                event.target.value = '';
+            }
+            
+            function exportToJson() {
+                const dataToExport = {
+                    type: "risu",
+                    ver: 1,
+                    data: lorebookData
+                };
+                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(dataToExport, null, 2));
+                const downloadAnchorNode = document.createElement('a');
+                downloadAnchorNode.setAttribute("href", dataStr);
+                downloadAnchorNode.setAttribute("download", "lorebook.json");
+                document.body.appendChild(downloadAnchorNode);
+                downloadAnchorNode.click();
+                downloadAnchorNode.remove();
+            }
+
+            function switchViewMode(mode) {
+                currentViewMode = mode;
+                if (mode === 'text') {
+                    viewTextBtn.classList.add('active');
+                    viewJsonBtn.classList.remove('active');
+                } else {
+                    viewJsonBtn.classList.add('active');
+                    viewTextBtn.classList.remove('active');
+                }
+                renderViewer();
+            }
+
+            // --- Event Listeners ---
+
+            addEntryBtn.addEventListener('click', addEntry);
+            newLorebookBtn.addEventListener('click', () => {
+                showConfirmation('Вы уверены, что хотите создать новый лорбук? Все несохраненные изменения будут потеряны.', () => {
+                    lorebookData = [];
+                    updateUI();
+                    hideConfirmation();
+                });
+            });
+            importJsonInput.addEventListener('change', importFromJson);
+            exportJsonBtn.addEventListener('click', exportToJson);
+            viewTextBtn.addEventListener('click', () => switchViewMode('text'));
+            viewJsonBtn.addEventListener('click', () => switchViewMode('json'));
+
+            entriesContainer.addEventListener('input', (e) => {
+                const target = e.target;
+                if (target.dataset.index && target.dataset.field) {
+                    const index = target.dataset.index;
+                    const field = target.dataset.field;
+                    updateEntryData(index, field, target, target.type);
+                }
+            });
+
+            entriesContainer.addEventListener('click', (e) => {
+                const target = e.target.closest('button');
+                if (!target) return;
+
+                const index = target.dataset.index;
+                const action = target.dataset.action;
+
+                if (target.classList.contains('delete-entry-btn')) {
+                    showConfirmation('Вы уверены, что хотите удалить эту запись?', () => {
+                        deleteEntry(parseInt(index, 10));
+                        hideConfirmation();
+                    });
+                    return;
+                }
+
+                if(action === 'toggle-settings') {
+                    const settingsPanel = document.getElementById(`settings-${index}`);
+                    settingsPanel.classList.toggle('open');
+                }
+            });
+
+            modalConfirmBtn.addEventListener('click', () => {
+                if (typeof actionToConfirm === 'function') {
+                    actionToConfirm();
+                }
+            });
+            modalCancelBtn.addEventListener('click', hideConfirmation);
+
+            // --- Initialization ---
+            lorebookData = initialData;
+            updateUI();
+        });
+    </script>
+</body>
+</html>
