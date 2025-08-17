@@ -33,7 +33,7 @@
             margin: 0;
         }
 
-        /* --- Анимации --- */
+        /* --- РђРЅРёРјР°С†РёРё --- */
         
 
         @keyframes pulse-glow {
@@ -55,12 +55,12 @@
             100% { clip-path: inset(25% 0 50% 0); transform: translate(-3px, 3px); }
         }
 
-        /* --- Кастомный скроллбар --- */
+        /* --- РљР°СЃС‚РѕРјРЅС‹Р№ СЃРєСЂРѕР»Р»Р±Р°СЂ --- */
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: #1a1a2e; }
         ::-webkit-scrollbar-thumb { background: var(--primary-neon); box-shadow: 0 0 5px var(--primary-neon); }
 
-        /* --- Основная структура --- */
+        /* --- РћСЃРЅРѕРІРЅР°СЏ СЃС‚СЂСѓРєС‚СѓСЂР° --- */
         .main-container { display: flex; flex-direction: column; height: 100vh; }
         .main-header {
             background-color: var(--panel-bg);
@@ -109,7 +109,7 @@
         .panel-header h2 { font-size: 1.2rem; font-weight: 600; }
         .panel-content { padding: 1rem; overflow-y: auto; }
         
-        /* --- Стили кнопок (Cyberpunk) --- */
+        /* --- РЎС‚РёР»Рё РєРЅРѕРїРѕРє (Cyberpunk) --- */
         .cyber-button {
             position: relative;
             padding: 0.6rem 1.2rem;
@@ -157,7 +157,7 @@
             text-shadow: -1px -1px 0 var(--secondary-neon), 1px 1px 0 var(--primary-neon);
             z-index: 3;
         }
-        /* Цвета кнопок */
+        /* Р¦РІРµС‚Р° РєРЅРѕРїРѕРє */
         .btn-sky::before { border-color: var(--primary-neon); }
         .btn-sky:hover .glitch-text { color: var(--primary-neon); }
         .btn-green::before { border-color: var(--green-neon); }
@@ -172,11 +172,11 @@
         .btn-secondary::after { background: linear-gradient(45deg, var(--primary-neon), var(--secondary-neon)); }
         .btn-secondary:hover .glitch-text { color: var(--secondary-neon); }
 
-        /* --- Элементы редактора --- */
+        /* --- Р­Р»РµРјРµРЅС‚С‹ СЂРµРґР°РєС‚РѕСЂР° --- */
         .entry-card {
             background-color: rgba(13, 12, 29, 0.7);
             padding: 1rem;
-            padding-right: 2.2rem; /* Исправление бага с обрезкой */
+            padding-right: 2.2rem; /* РСЃРїСЂР°РІР»РµРЅРёРµ Р±Р°РіР° СЃ РѕР±СЂРµР·РєРѕР№ */
             border: 1px solid var(--border-color);
             clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 0 100%);
             margin-bottom: 1rem;
@@ -191,7 +191,7 @@
             border: 1px solid var(--border-color);
             padding: 0.5rem;
             color: var(--text-color);
-            font-family: 'Inter', sans-serif; /* Новый шрифт для читаемости */
+            font-family: 'Inter', sans-serif; /* РќРѕРІС‹Р№ С€СЂРёС„С‚ РґР»СЏ С‡РёС‚Р°РµРјРѕСЃС‚Рё */
             outline: none;
             transition: all 0.3s ease;
             margin-bottom: 0.75rem;
@@ -225,7 +225,7 @@
         input:checked + .slider { background-color: var(--primary-neon); box-shadow: 0 0 5px var(--primary-neon); border-color: var(--primary-neon); }
         input:checked + .slider:before { transform: translateX(26px); background-color: var(--bg-color); }
 
-        /* --- Панель просмотра --- */
+        /* --- РџР°РЅРµР»СЊ РїСЂРѕСЃРјРѕС‚СЂР° --- */
         .viewer-toggle { display: flex; background-color: var(--bg-color); border: 1px solid var(--border-color); }
         .viewer-toggle button {
             padding: 0.5rem 0.75rem;
@@ -254,16 +254,16 @@
         .viewer-entry p { 
             white-space: pre-wrap; 
             line-height: 1.6; 
-            font-family: 'Inter', sans-serif; /* Новый шрифт для читаемости */
+            font-family: 'Inter', sans-serif; /* РќРѕРІС‹Р№ С€СЂРёС„С‚ РґР»СЏ С‡РёС‚Р°РµРјРѕСЃС‚Рё */
         }
         pre { 
             white-space: pre-wrap; 
             word-break: break-all; 
             font-size: 0.9rem;
-            font-family: 'Inter', sans-serif; /* Новый шрифт для читаемости */
+            font-family: 'Inter', sans-serif; /* РќРѕРІС‹Р№ С€СЂРёС„С‚ РґР»СЏ С‡РёС‚Р°РµРјРѕСЃС‚Рё */
         }
 
-        /* --- Модальное окно --- */
+        /* --- РњРѕРґР°Р»СЊРЅРѕРµ РѕРєРЅРѕ --- */
         .modal-overlay { position: fixed; inset: 0; background-color: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 50; }
         .modal-hidden { display: none; }
         .modal-content {
@@ -290,17 +290,17 @@
             <h1>Lorebook Creator</h1>
             <div class="header-buttons">
                 <button id="new-lorebook-btn" class="cyber-button btn-sky">
-                    <span class="button-text">Новый Лорбук</span>
-                    <span class="glitch-text">Очистить</span>
+                    <span class="button-text">РќРѕРІС‹Р№ Р›РѕСЂР±СѓРє</span>
+                    <span class="glitch-text">РћС‡РёСЃС‚РёС‚СЊ</span>
                 </button>
                 <label for="import-json" class="cyber-button btn-green">
-                    <span class="button-text">Импорт JSON</span>
-                    <span class="glitch-text">Загрузить</span>
+                    <span class="button-text">РРјРїРѕСЂС‚ JSON</span>
+                    <span class="glitch-text">Р—Р°РіСЂСѓР·РёС‚СЊ</span>
                 </label>
                 <input type="file" id="import-json" class="hidden-input" accept=".json">
                 <button id="export-json-btn" class="cyber-button btn-indigo">
-                    <span class="button-text">Экспорт JSON</span>
-                    <span class="glitch-text">Сохранить</span>
+                    <span class="button-text">Р­РєСЃРїРѕСЂС‚ JSON</span>
+                    <span class="glitch-text">РЎРѕС…СЂР°РЅРёС‚СЊ</span>
                 </button>
             </div>
         </header>
@@ -310,41 +310,41 @@
             <!-- Editor Panel -->
             <div id="editor-panel" class="panel">
                 <div class="panel-header">
-                    <h2>Редактор</h2>
+                    <h2>Р РµРґР°РєС‚РѕСЂ</h2>
                     <button id="add-entry-btn" class="cyber-button btn-sky">
-                         <span class="button-text">Добавить запись</span>
-                         <span class="glitch-text">Создать</span>
+                         <span class="button-text">Р”РѕР±Р°РІРёС‚СЊ Р·Р°РїРёСЃСЊ</span>
+                         <span class="glitch-text">РЎРѕР·РґР°С‚СЊ</span>
                     </button>
                 </div>
                 <div id="entries-container" class="panel-content">
-                    <!-- Записи лорбука будут здесь -->
+                    <!-- Р—Р°РїРёСЃРё Р»РѕСЂР±СѓРєР° Р±СѓРґСѓС‚ Р·РґРµСЃСЊ -->
                 </div>
             </div>
 
             <!-- Viewer Panel -->
             <div id="viewer-panel" class="panel">
                 <div class="panel-header">
-                    <h2>Просмотр</h2>
+                    <h2>РџСЂРѕСЃРјРѕС‚СЂ</h2>
                     <div class="viewer-toggle">
-                        <button id="view-text-btn" class="active">Текст</button>
+                        <button id="view-text-btn" class="active">РўРµРєСЃС‚</button>
                         <button id="view-json-btn">JSON</button>
                     </div>
                 </div>
                 <div id="viewer-content" class="panel-content">
-                    <!-- Содержимое для просмотра будет здесь -->
+                    <!-- РЎРѕРґРµСЂР¶РёРјРѕРµ РґР»СЏ РїСЂРѕСЃРјРѕС‚СЂР° Р±СѓРґРµС‚ Р·РґРµСЃСЊ -->
                 </div>
             </div>
         </main>
     </div>
 
-    <!-- Модальное окно для подтверждения -->
+    <!-- РњРѕРґР°Р»СЊРЅРѕРµ РѕРєРЅРѕ РґР»СЏ РїРѕРґС‚РІРµСЂР¶РґРµРЅРёСЏ -->
     <div id="confirmation-modal" class="modal-overlay modal-hidden">
         <div class="modal-content">
-            <h3 id="modal-title">Подтверждение</h3>
-            <p id="modal-message">Вы уверены?</p>
+            <h3 id="modal-title">РџРѕРґС‚РІРµСЂР¶РґРµРЅРёРµ</h3>
+            <p id="modal-message">Р’С‹ СѓРІРµСЂРµРЅС‹?</p>
             <div class="modal-buttons">
-                <button id="modal-cancel" class="cyber-button">Отмена</button>
-                <button id="modal-confirm" class="cyber-button btn-red">Подтвердить</button>
+                <button id="modal-cancel" class="cyber-button">РћС‚РјРµРЅР°</button>
+                <button id="modal-confirm" class="cyber-button btn-red">РџРѕРґС‚РІРµСЂРґРёС‚СЊ</button>
             </div>
         </div>
     </div>
@@ -371,10 +371,10 @@
 
             const initialData = [
                 {
-                    key: "Пример ключа",
-                    content: "Это описание для примера. Вы можете отредактировать его или добавить новые записи, чтобы начать создавать свой лорбук.",
-                    comment: "?? Это комментарий к записи",
-                    secondkey: "Пример, Начало",
+                    key: "РџСЂРёРјРµСЂ РєР»СЋС‡Р°",
+                    content: "Р­С‚Рѕ РѕРїРёСЃР°РЅРёРµ РґР»СЏ РїСЂРёРјРµСЂР°. Р’С‹ РјРѕР¶РµС‚Рµ РѕС‚СЂРµРґР°РєС‚РёСЂРѕРІР°С‚СЊ РµРіРѕ РёР»Рё РґРѕР±Р°РІРёС‚СЊ РЅРѕРІС‹Рµ Р·Р°РїРёСЃРё, С‡С‚РѕР±С‹ РЅР°С‡Р°С‚СЊ СЃРѕР·РґР°РІР°С‚СЊ СЃРІРѕР№ Р»РѕСЂР±СѓРє.",
+                    comment: "рџ“њ Р­С‚Рѕ РєРѕРјРјРµРЅС‚Р°СЂРёР№ Рє Р·Р°РїРёСЃРё",
+                    secondkey: "РџСЂРёРјРµСЂ, РќР°С‡Р°Р»Рѕ",
                     alwaysActive: true,
                     selective: false,
                     disabled: false,
@@ -403,8 +403,8 @@
                 entriesContainer.innerHTML = '';
                 if (lorebookData.length === 0) {
                     entriesContainer.innerHTML = `<div style="text-align: center; color: #666; padding: 2rem;">
-                        <p>// Лорбук пуст //</p>
-                        <p>// Нажмите "Добавить запись" для инициализации //</p>
+                        <p>// Р›РѕСЂР±СѓРє РїСѓСЃС‚ //</p>
+                        <p>// РќР°Р¶РјРёС‚Рµ "Р”РѕР±Р°РІРёС‚СЊ Р·Р°РїРёСЃСЊ" РґР»СЏ РёРЅРёС†РёР°Р»РёР·Р°С†РёРё //</p>
                     </div>`;
                     return;
                 }
@@ -416,49 +416,49 @@
 
                     entryElement.innerHTML = `
                         <div class="entry-header">
-                            <label>Основной ключ:</label>
-                            <button data-index="${index}" class="delete-entry-btn" title="Удалить запись">
+                            <label>РћСЃРЅРѕРІРЅРѕР№ РєР»СЋС‡:</label>
+                            <button data-index="${index}" class="delete-entry-btn" title="РЈРґР°Р»РёС‚СЊ Р·Р°РїРёСЃСЊ">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
                             </button>
                         </div>
                         <input type="text" data-index="${index}" data-field="key" value="${entry.key || ''}">
                         
-                        <label class="input-label">Описание:</label>
+                        <label class="input-label">РћРїРёСЃР°РЅРёРµ:</label>
                         <textarea data-index="${index}" data-field="content">${entry.content || ''}</textarea>
                         
                         <div style="margin-top: 0.5rem;">
                             <button class="cyber-button btn-secondary" data-index="${index}" data-action="toggle-settings" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">
-                                <span class="button-text">Настройки</span>
-                                <span class="glitch-text">Опции</span>
+                                <span class="button-text">РќР°СЃС‚СЂРѕР№РєРё</span>
+                                <span class="glitch-text">РћРїС†РёРё</span>
                             </button>
                         </div>
 
                         <div class="advanced-settings" id="settings-${index}">
-                            <label class="input-label">Вторичные ключи (опционально):</label>
+                            <label class="input-label">Р’С‚РѕСЂРёС‡РЅС‹Рµ РєР»СЋС‡Рё (РѕРїС†РёРѕРЅР°Р»СЊРЅРѕ):</label>
                             <input type="text" data-index="${index}" data-field="secondkey" value="${entry.secondkey || ''}">
 
-                            <label class="input-label">Комментарий (опционально):</label>
+                            <label class="input-label">РљРѕРјРјРµРЅС‚Р°СЂРёР№ (РѕРїС†РёРѕРЅР°Р»СЊРЅРѕ):</label>
                             <input type="text" data-index="${index}" data-field="comment" value="${entry.comment || ''}">
                             
-                            <label class="input-label">Категория:</label>
+                            <label class="input-label">РљР°С‚РµРіРѕСЂРёСЏ:</label>
                             <select data-index="${index}" data-field="category">${categoryOptions}</select>
 
                             <div class="toggle-switch">
-                                <label>Постоянный (Always Active)</label>
+                                <label>РџРѕСЃС‚РѕСЏРЅРЅС‹Р№ (Always Active)</label>
                                 <label class="switch">
                                     <input type="checkbox" data-index="${index}" data-field="alwaysActive" ${entry.alwaysActive ? 'checked' : ''}>
                                     <span class="slider"></span>
                                 </label>
                             </div>
                             <div class="toggle-switch">
-                                <label>Выборочный (Selective)</label>
+                                <label>Р’С‹Р±РѕСЂРѕС‡РЅС‹Р№ (Selective)</label>
                                 <label class="switch">
                                     <input type="checkbox" data-index="${index}" data-field="selective" ${entry.selective ? 'checked' : ''}>
                                     <span class="slider"></span>
                                 </label>
                             </div>
                             <div class="toggle-switch">
-                                <label>Отключено (Disabled)</label>
+                                <label>РћС‚РєР»СЋС‡РµРЅРѕ (Disabled)</label>
                                 <label class="switch">
                                     <input type="checkbox" data-index="${index}" data-field="disabled" ${entry.disabled ? 'checked' : ''}>
                                     <span class="slider"></span>
@@ -467,11 +467,11 @@
                             
                             <div class="settings-grid">
                                 <div>
-                                    <label class="input-label">Порядок (1-100):</label>
+                                    <label class="input-label">РџРѕСЂСЏРґРѕРє (1-100):</label>
                                     <input type="number" data-index="${index}" data-field="insertorder" value="${entry.insertorder || 0}">
                                 </div>
                                 <div>
-                                    <label class="input-label">Позиция (0-100):</label>
+                                    <label class="input-label">РџРѕР·РёС†РёСЏ (0-100):</label>
                                     <input type="number" data-index="${index}" data-field="position" value="${entry.position || 0}">
                                 </div>
                             </div>
@@ -485,13 +485,13 @@
                 viewerContent.innerHTML = '';
                 if (currentViewMode === 'text') {
                     if (lorebookData.length === 0) {
-                        viewerContent.innerHTML = `<div style="text-align: center; color: #666; padding: 2rem;">// Нет данных для отображения //</div>`;
+                        viewerContent.innerHTML = `<div style="text-align: center; color: #666; padding: 2rem;">// РќРµС‚ РґР°РЅРЅС‹С… РґР»СЏ РѕС‚РѕР±СЂР°Р¶РµРЅРёСЏ //</div>`;
                         return;
                     }
                     const textHtml = lorebookData.map(entry => `
                         <div class="viewer-entry" style="margin-bottom: 1.5rem;">
-                            <h3>${entry.key || 'Без ключа'}</h3>
-                            <p>${entry.content || 'Нет описания.'}</p>
+                            <h3>${entry.key || 'Р‘РµР· РєР»СЋС‡Р°'}</h3>
+                            <p>${entry.content || 'РќРµС‚ РѕРїРёСЃР°РЅРёСЏ.'}</p>
                         </div>
                     `).join('');
                     viewerContent.innerHTML = textHtml;
@@ -508,7 +508,7 @@
 
             function addEntry() {
                 const newEntry = {
-                    key: `Новый ключ ${lorebookData.length + 1}`,
+                    key: `РќРѕРІС‹Р№ РєР»СЋС‡ ${lorebookData.length + 1}`,
                     content: "",
                     comment: "",
                     secondkey: "",
@@ -554,7 +554,7 @@
                     try {
                         const json = JSON.parse(e.target.result);
                         if (json && Array.isArray(json.data)) {
-                            // Добавляем недостающие поля с дефолтными значениями
+                            // Р”РѕР±Р°РІР»СЏРµРј РЅРµРґРѕСЃС‚Р°СЋС‰РёРµ РїРѕР»СЏ СЃ РґРµС„РѕР»С‚РЅС‹РјРё Р·РЅР°С‡РµРЅРёСЏРјРё
                             lorebookData = json.data.map(entry => ({
                                 key: entry.key || "",
                                 content: entry.content || "",
@@ -571,10 +571,10 @@
                             }));
                             updateUI();
                         } else {
-                            alert('Ошибка: JSON файл имеет неверную структуру.');
+                            alert('РћС€РёР±РєР°: JSON С„Р°Р№Р» РёРјРµРµС‚ РЅРµРІРµСЂРЅСѓСЋ СЃС‚СЂСѓРєС‚СѓСЂСѓ.');
                         }
                     } catch (error) {
-                        alert(`Ошибка при чтении JSON файла: ${error.message}`);
+                        alert(`РћС€РёР±РєР° РїСЂРё С‡С‚РµРЅРёРё JSON С„Р°Р№Р»Р°: ${error.message}`);
                     }
                 };
                 reader.readAsText(file);
@@ -612,7 +612,7 @@
 
             addEntryBtn.addEventListener('click', addEntry);
             newLorebookBtn.addEventListener('click', () => {
-                showConfirmation('Вы уверены, что хотите создать новый лорбук? Все несохраненные изменения будут потеряны.', () => {
+                showConfirmation('Р’С‹ СѓРІРµСЂРµРЅС‹, С‡С‚Рѕ С…РѕС‚РёС‚Рµ СЃРѕР·РґР°С‚СЊ РЅРѕРІС‹Р№ Р»РѕСЂР±СѓРє? Р’СЃРµ РЅРµСЃРѕС…СЂР°РЅРµРЅРЅС‹Рµ РёР·РјРµРЅРµРЅРёСЏ Р±СѓРґСѓС‚ РїРѕС‚РµСЂСЏРЅС‹.', () => {
                     lorebookData = [];
                     updateUI();
                     hideConfirmation();
@@ -640,7 +640,7 @@
                 const action = target.dataset.action;
 
                 if (target.classList.contains('delete-entry-btn')) {
-                    showConfirmation('Вы уверены, что хотите удалить эту запись?', () => {
+                    showConfirmation('Р’С‹ СѓРІРµСЂРµРЅС‹, С‡С‚Рѕ С…РѕС‚РёС‚Рµ СѓРґР°Р»РёС‚СЊ СЌС‚Сѓ Р·Р°РїРёСЃСЊ?', () => {
                         deleteEntry(parseInt(index, 10));
                         hideConfirmation();
                     });
