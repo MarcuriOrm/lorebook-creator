@@ -3,15 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cyberpunk Tools Hub</title>
+    <title>sugarHUB</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Inter:wght@400&display=swap" rel="stylesheet">
-    <!-- Chosen Palette: Cyberpunk Neon (Dark Violet, Neon Cyan, Magenta) -->
-    <!-- Application Structure Plan: A central hub page with a welcome message, navigation panels to different tools (Creator, Reader), and a live server status dashboard. This structure provides a clear entry point for users and centralizes key information. -->
-    <!-- Visualization & Content Choices: Navigation is handled by large, clickable HTML panels. The server status dashboard uses HTML/CSS for layout and dynamically updated text fields powered by a JavaScript fetch() loop to an external API endpoint. -->
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
         :root {
             --bg-color: #0d0c1d;
@@ -24,41 +20,108 @@
             --green-neon: #00ff9b;
             --red-neon: #ff1b48;
         }
-
-        *, *::before, *::after { box-sizing: border-box; }
-
         body {
             font-family: 'Inter', sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
-            margin: 0;
         }
-
-        h1, h2, h3, .font-orbitron { font-family: 'Orbitron', sans-serif; }
+        .font-orbitron { font-family: 'Orbitron', sans-serif; }
 
         @keyframes pulse-glow {
             0%, 100% { text-shadow: 0 0 5px var(--header-color), 0 0 10px var(--header-color); }
             50% { text-shadow: 0 0 10px var(--header-color), 0 0 20px var(--header-color); }
         }
-        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes glitch-animation {
+            0% { clip-path: inset(25% 0 50% 0); transform: translate(-2px, 0); }
+            25% { clip-path: inset(5% 0 80% 0); transform: translate(2px, 2px); }
+            50% { clip-path: inset(60% 0 10% 0); transform: translate(-2px, -2px); }
+            75% { clip-path: inset(40% 0 20% 0); transform: translate(2px, 0); }
+            100% { clip-path: inset(25% 0 50% 0); transform: translate(-2px, 2px); }
+        }
+        @keyframes scanline {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 100%; }
+        }
         @keyframes pulse-border {
-            0%, 100% { border-color: rgba(0, 229, 255, 0.3); }
-            50% { border-color: rgba(0, 229, 255, 0.8); }
+            0%, 100% { border-color: rgba(0, 229, 255, 0.3); box-shadow: 0 0 15px rgba(0, 229, 255, 0.1); }
+            50% { border-color: rgba(0, 229, 255, 0.8); box-shadow: 0 0 25px rgba(0, 229, 255, 0.3); }
+        }
+        @keyframes pulse-border-top {
+            0%, 100% { border-top-color: rgba(0, 229, 255, 0.3); }
+            50% { border-top-color: rgba(0, 229, 255, 0.8); }
+        }
+        @keyframes pulse-glow-bg {
+             0%, 100% { background-color: var(--primary-neon); box-shadow: 0 0 8px var(--primary-neon); }
+             50% { background-color: var(--header-color); box-shadow: 0 0 15px var(--header-color); }
         }
 
-        .panel {
+
+        /* --- Стили Меню --- */
+        .cyber-header {
             background-color: var(--panel-bg);
-            border: 1px solid var(--border-color);
-            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%);
-            animation: pulse-border 4s infinite ease-in-out;
+            border-bottom: 2px solid var(--border-color);
+            box-shadow: 0 0 15px rgba(0, 229, 255, 0.2);
+        }
+        .nav-link {
+            position: relative; text-transform: uppercase; color: var(--text-color);
+            transition: color 0.3s ease; padding: 0.5rem 0; cursor: pointer;
+        }
+        .nav-link::after {
+            content: ''; position: absolute; width: 100%; height: 2px;
+            bottom: 0; left: 0; background-color: var(--primary-neon);
+            transform: scaleX(0); transform-origin: bottom right;
+            transition: transform 0.3s ease-out; box-shadow: 0 0 8px var(--primary-neon);
+        }
+        .nav-link:hover, .dropdown:hover .nav-link {
+            color: var(--primary-neon); text-shadow: 0 0 5px var(--primary-neon);
+        }
+        .nav-link:hover::after, .dropdown:hover .nav-link::after {
+            transform: scaleX(1); transform-origin: bottom left;
+        }
+        .dropdown {
+            position: relative; padding-bottom: 10px; margin-bottom: -10px;
+        }
+        .dropdown-content {
+            display: none; position: absolute; top: 100%; left: 0;
+            background-color: var(--panel-bg); min-width: 160px;
+            border: 1px solid var(--border-color); z-index: 50; padding: 0.5rem 0;
+            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%);
+            animation: fadeIn 0.3s ease-out;
+        }
+        .dropdown:hover .dropdown-content { display: block; }
+        .dropdown-content a {
+            color: var(--text-color); padding: 12px 16px; text-decoration: none;
+            display: block; text-align: left; transition: all 0.2s ease;
+        }
+        .dropdown-content a:hover { background-color: var(--primary-neon); color: var(--bg-color); }
+        .cyber-button {
+            position: relative; padding: 0.5rem 1rem; border: none; background-color: transparent;
+            color: var(--text-color); font-size: 0.8rem; font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase; cursor: pointer; outline: none;
+            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%);
+            transition: color 0.2s ease;
+        }
+        .cyber-button::before, .cyber-button::after {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: -1;
+            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%);
             transition: all 0.3s ease;
         }
-        .nav-panel:hover {
-            border-color: var(--primary-neon);
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 229, 255, 0.2);
+        .cyber-button::before { background: var(--panel-bg); border: 1px solid var(--primary-neon); }
+        .cyber-button::after { background: linear-gradient(45deg, var(--secondary-neon), var(--primary-neon)); opacity: 0; }
+        .cyber-button:hover::after { opacity: 1; }
+        .cyber-button:hover { color: var(--bg-color); }
+        .cyber-button:hover .glitch-text { opacity: 1; animation: glitch-animation 0.3s infinite; }
+        .glitch-text {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex;
+            justify-content: center; align-items: center; opacity: 0; color: var(--primary-neon);
+            text-shadow: -1px -1px 0 var(--secondary-neon), 1px 1px 0 var(--primary-neon); z-index: 3;
         }
 
+        /* --- Стили для главной страницы --- */
         .status-dot {
             width: 12px;
             height: 12px;
@@ -68,62 +131,164 @@
         }
         .status-dot.online { background-color: var(--green-neon); box-shadow: 0 0 8px var(--green-neon); }
         .status-dot.offline { background-color: var(--red-neon); box-shadow: 0 0 8px var(--red-neon); }
+
+        .panel {
+            background-color: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%);
+            animation: pulse-border 4s infinite ease-in-out;
+            transition: all 0.3s ease;
+            margin-top: 30px;
+        }
+        .nav-panel:hover {
+            border-color: var(--primary-neon);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 229, 255, 0.2);
+        }
+
+
+
+        .cyber-screen {
+            position: relative;
+            border: 3px solid;
+            padding: 20px;
+            animation: pulse-border 3s infinite ease-in-out;
+            clip-path: polygon(0 20px, 20px 0, calc(100% - 20px) 0, 100% 20px, 100% calc(100% - 20px), calc(100% - 20px) 100%, 20px 100%, 0 calc(100% - 20px));
+        }
+        .cyber-screen::before, .cyber-screen::after {
+            content: ''; position: absolute; width: 0px; height: 0px;
+            animation: pulse-glow-bg 3s infinite ease-in-out;
+        }
+        .cyber-screen::before { top: -3px; left: 40px; }
+        .cyber-screen::after { bottom: -3px; right: 40px; }
+
+        .scanline-overlay {
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(to bottom, rgba(13, 12, 29, 0.4), rgba(13, 12, 29, 0.4) 50%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0));
+            background-size: 100% 4px;
+            animation: scanline 15s linear infinite;
+            pointer-events: none;
+        }
+        
+        .news-scrollbar::-webkit-scrollbar { width: 6px; }
+        .news-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .news-scrollbar::-webkit-scrollbar-thumb { background: var(--primary-neon); }
+        
+        .news-box {
+            border: 1px solid;
+            animation: pulse-border 4s infinite ease-in-out;
+        }
+        .news-divider {
+            border-top: 1px solid;
+            animation: pulse-border-top 4s infinite ease-in-out;
+        }
+        .underbox {
+            margin-top: 10px;
+            border: 1px solid;
+            animation: pulse-border 4s infinite ease-in-out;
+        }
+
+
     </style>
 </head>
-<body class="bg-bg-color text-text-color">
+<body>
 
-    <div class="max-w-7xl mx-auto p-4 md:p-8 min-h-screen flex flex-col">
-        <header class="text-center mb-12">
-            <h1 class="text-4xl md:text-5xl font-bold text-header-color" style="animation: pulse-glow 3s infinite ease-in-out;">Добро пожаловать</h1>
-            <p class="text-lg text-gray-400 mt-2 font-orbitron">Ваш центр киберпанк-инструментов</p>
-        </header>
-
-        <main class="flex-grow">
-            <!-- Navigation Panels -->
-            <section class="mb-12">
-                <h2 class="text-2xl font-orbitron text-center mb-8" style="animation: pulse-glow 3.5s infinite ease-in-out;">Инструменты</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <a href="creator.html" class="nav-panel panel p-8 block text-center">
-                        <h3 class="text-2xl font-bold text-primary-neon mb-2">Создать Лорбук</h3>
-                        <p class="text-gray-400">Мощный редактор для создания и настройки ваших лорбуков.</p>
-                    </a>
-                    <a href="reader.html" class="nav-panel panel p-8 block text-center">
-                        <h3 class="text-2xl font-bold text-primary-neon mb-2">Читать Лорбук</h3>
-                        <p class="text-gray-400">Интерактивный просмотрщик для исследования готовых миров.</p>
-                    </a>
-                </div>
-            </section>
-
-            <!-- Server Status -->
-            <section>
-                <h2 class="text-2xl font-orbitron text-center mb-8" style="animation: pulse-glow 4s infinite ease-in-out;">Статус Сервера</h2>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <div class="panel p-6">
-                        <h3 class="font-bold text-lg mb-4">Статус</h3>
-                        <p class="flex items-center text-2xl">
-                            <span id="status-dot" class="status-dot offline"></span>
-                            <span id="status-text">Offline</span>
-                        </p>
-                        <p class="text-sm text-gray-400 mt-4">Время работы: <span id="status-uptime">...</span></p>
-                        <p class="text-sm text-gray-400">Всего запросов: <span id="status-requests">...</span></p>
+    <header class="cyber-header p-4 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <a href="index.html" class="text-2xl font-orbitron font-bold text-header-color" style="animation: pulse-glow 3s infinite ease-in-out;">
+                sugarHUB
+            </a>
+            <div class="flex items-center space-x-6 md:space-x-8">
+                <nav class="hidden md:flex items-center space-x-6 md:space-x-8">
+                    <div class="dropdown">
+                        <span class="nav-link font-orbitron">Конструктор</span>
+                        <div class="dropdown-content">
+                            <a href="creator.html">Лорбук</a>
+                            <a href="#">Персонаж</a>
+                            <a href="#">Другое</a>
+                        </div>
                     </div>
-                    <div class="panel p-6">
-                        <h3 class="font-bold text-lg mb-4">Последние ошибки</h3>
-                        <p id="status-errors" class="text-sm text-red-400">Загрузка...</p>
-                    </div>
-                    <div class="panel p-6">
-                        <h3 class="font-bold text-lg mb-4">Нагрузка системы</h3>
-                        <p class="text-sm text-gray-400">CPU: <span id="status-cpu">...</span></p>
-                        <p class="text-sm text-gray-400 mt-2">Memory: <span id="status-memory">...</span></p>
+                    <a href="reader.html" class="nav-link font-orbitron">Библиотека</a>
+                </nav>
+                <button class="cyber-button">
+                    <span class="button-text">Войти</span>
+                    <span class="glitch-text">Login</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto p-4 md:p-8 mt-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+            <!-- Левая колонка: Киберпанк-экран (на мобилке первая) -->
+            <div class="panel p-6">
+                <div class="cyber-screen">
+                    <div class="relative aspect-video bg-cover bg-center" 
+                         style="background-image: url('https://i.ibb.co/3G8pDJk/1.png');"
+                         onerror="this.style.backgroundImage='url(https://placehold.co/1280x720/0d0c1d/00e5ff?text=sugarHUB)'">
+                        <div class="scanline-overlay"></div>
                     </div>
                 </div>
-            </section>
-        </main>
+                <div class="underbox news-scrollbar bg-panel-bg/50 p-6 space-y-4 max-h-[400px] overflow-y-auto">
+                        <div>
+                            <h3 class="font-bold text-primary-neon">Oh shit, here we go again...</h3>
+                            <p class="text-sm text-gray-400">(c) sugarDiddy</p>
+                            <p class="mt-2">Все здесь создано при поддержке СДВГ, фиксаций на глупеньком и такой-то матери. Сожаления? Заполните PREFILL, без него сожалений не будет.</p>
+                        </div>
+                </div>
+
+            </div>
+            
+            <!-- Правая колонка: Новости (на мобилке вторая) -->
+            <div class="panel p-6">
+                <section>
+                    <h2 class="text-3xl font-orbitron text-center mb-6" style="animation: pulse-glow 3.5s infinite ease-in-out;">Новости</h2>
+                    <div class="news-box news-scrollbar bg-panel-bg/50 p-6 space-y-4 max-h-[418px] overflow-y-auto">
+                        <div>
+                            <h3 class="font-bold text-primary-neon">Версия 1.0 запущена!</h3>
+                            <p class="text-sm text-gray-400">18.08.2025</p>
+                            <p class="mt-2">Добро пожаловать на sugarHUB! Запущены два основных инструмента: "Конструктор Лорбуков" и "Интерактивная Библиотека".</p>
+                        </div>
+                        <div class="news-divider pt-4">
+                            <h3 class="font-bold text-primary-neon">Обновление прокси-сервера</h3>
+                            <p class="text-sm text-gray-400">17.08.2025</p>
+                            <p class="mt-2">Сервер обновлен до последней версии, добавлена поддержка актуальных моделей Gemini 2.5.</p>
+                        </div>
+                         <div class="news-divider pt-4">
+                            <h3 class="font-bold text-primary-neon">Планы на будущее</h3>
+                            <p class="text-sm text-gray-400">16.08.2025</p>
+                            <p class="mt-2">В разработке находится конструктор персонажей и общая библиотека лорбуков с возможностью публикации.</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
         
-        <footer class="text-center text-gray-600 mt-12 py-4">
-            <p>&copy; 2025. Создано с любовью.</p>
-        </footer>
-    </div>
+        <!-- Статус Сервера (отдельный блок) -->
+        <section class="panel p-6">
+            <h2 class="text-3xl font-orbitron text-center mb-8" style="animation: pulse-glow 4s infinite ease-in-out;">Статус Сервера</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="cyber-screen">
+                    <h3 class="font-bold text-lg mb-4">Статус</h3>
+                    <p class="flex items-center text-2xl">
+                        <span id="status-dot" class="status-dot offline"></span>
+                        <span id="status-text">Offline</span>
+                    </p>
+                    <p class="text-sm text-gray-400 mt-4">Время работы: <span id="status-uptime">...</span></p>
+                    <p class="text-sm text-gray-400">Всего запросов: <span id="status-requests">...</span></p>
+                </div>
+                <div class="cyber-screen">
+                     <h3 class="font-bold text-lg mb-4">Последние ошибки</h3>
+                     <p id="status-errors" class="text-sm text-red-400 h-16 overflow-y-auto news-scrollbar">Загрузка...</p>
+                </div>
+                <div class="cyber-screen">
+                    <h3 class="font-bold text-lg mb-4">Нагрузка системы</h3>
+                    <p class="text-sm text-gray-400">CPU: <span id="status-cpu">...</span></p>
+                    <p class="text-sm text-gray-400 mt-2">Memory: <span id="status-memory">...</span></p>
+                </div>
+            </div>
+        </section>
+    </main>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -140,46 +305,36 @@
             async function fetchStatus() {
                 try {
                     const response = await fetch(serverUrl);
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                     const data = await response.json();
 
-                    // Обновляем статус
-                    statusDot.classList.remove('offline');
-                    statusDot.classList.add('online');
+                    statusDot.className = 'status-dot online';
                     statusText.textContent = data.status || 'Online';
                     statusText.style.color = 'var(--green-neon)';
-
-                    // Обновляем другие данные
                     statusUptime.textContent = data.uptime || 'N/A';
                     statusRequests.textContent = data.total_requests || 'N/A';
                     statusErrors.textContent = data.error || 'Ошибок нет';
-                    if(data.error) statusErrors.style.color = 'var(--red-neon)';
-                    else statusErrors.style.color = 'var(--green-neon)';
-                    
-                    statusCpu.textContent = data.cpu_load ? `${data.cpu_load}%` : 'N/A';
-                    statusMemory.textContent = data.memory_usage ? `${data.memory_usage}%` : 'N/A';
+                    statusErrors.style.color = data.error && data.error !== 'Ошибок нет' ? 'var(--red-neon)' : 'var(--green-neon)';
+                    statusCpu.textContent = data.cpu_load || 'N/A';
+                    statusMemory.textContent = data.memory_usage || 'N/A';
 
                 } catch (error) {
                     console.error("Failed to fetch server status:", error);
-                    statusDot.classList.remove('online');
-                    statusDot.classList.add('offline');
+                    statusDot.className = 'status-dot offline';
                     statusText.textContent = 'Offline';
                     statusText.style.color = 'var(--red-neon)';
-                    
                     statusUptime.textContent = 'N/A';
                     statusRequests.textContent = 'N/A';
-                    statusErrors.textContent = 'Не удалось получить статус. Проверьте консоль.';
+                    statusErrors.textContent = 'Не удалось получить статус.';
                     statusCpu.textContent = 'N/A';
                     statusMemory.textContent = 'N/A';
                 }
             }
 
-            // Запускаем проверку сразу и потом каждые 15 секунд
             fetchStatus();
             setInterval(fetchStatus, 15000);
         });
     </script>
+
 </body>
 </html>
