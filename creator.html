@@ -3,9 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lorebook Creator - Cyberpunk Edition</title>
+    <title>Lorebook Creator - sugarDiddy Edition</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="icon" type="image/png" href="/main/favicon-96x96.png" sizes="96x96" />
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Inter:wght@400&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -20,80 +23,113 @@
             --red-neon: #ff1b48;
             --indigo-neon: #8A2BE2;
         }
-
-        *, *::before, *::after {
-            box-sizing: border-box;
-        }
-
         body {
-            font-family: 'Orbitron', sans-serif;
+            font-family: 'Inter', sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
             margin: 0;
         }
+        h1, h2, h3, .font-orbitron { font-family: 'Orbitron', sans-serif; }
 
-        /* --- Анимации --- */
         @keyframes pulse-glow {
-            0%, 100% {
-                text-shadow: 0 0 5px var(--header-color), 0 0 10px var(--header-color), 0 0 15px var(--header-color);
-                border-color: rgba(0, 229, 255, 0.3);
-            }
-            50% {
-                text-shadow: 0 0 10px var(--header-color), 0 0 20px var(--header-color), 0 0 30px var(--header-color);
-                border-color: rgba(0, 229, 255, 0.8);
-            }
+            0%, 100% { text-shadow: 0 0 5px var(--header-color), 0 0 10px var(--header-color); }
+            50% { text-shadow: 0 0 10px var(--header-color), 0 0 20px var(--header-color); }
         }
-        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
         @keyframes glitch-animation {
-            0% { clip-path: inset(25% 0 50% 0); transform: translate(-3px, 0); }
-            25% { clip-path: inset(5% 0 80% 0); transform: translate(3px, 3px); }
-            50% { clip-path: inset(60% 0 10% 0); transform: translate(-3px, -3px); }
-            75% { clip-path: inset(40% 0 20% 0); transform: translate(3px, 0); }
-            100% { clip-path: inset(25% 0 50% 0); transform: translate(-3px, 3px); }
+            0% { clip-path: inset(25% 0 50% 0); transform: translate(-2px, 0); }
+            25% { clip-path: inset(5% 0 80% 0); transform: translate(2px, 2px); }
+            50% { clip-path: inset(60% 0 10% 0); transform: translate(-2px, -2px); }
+            75% { clip-path: inset(40% 0 20% 0); transform: translate(2px, 0); }
+            100% { clip-path: inset(25% 0 50% 0); transform: translate(-2px, 2px); }
         }
 
-        /* --- Кастомный скроллбар --- */
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: #1a1a2e; }
         ::-webkit-scrollbar-thumb { background: var(--primary-neon); box-shadow: 0 0 5px var(--primary-neon); }
 
-        /* --- Основная структура --- */
-        .main-container { display: flex; flex-direction: column; min-height: 100vh; }
-        .main-header {
+        /* --- Стили Меню --- */
+        .cyber-header {
             background-color: var(--panel-bg);
-            padding: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
             border-bottom: 2px solid var(--border-color);
             box-shadow: 0 0 15px rgba(0, 229, 255, 0.2);
-            flex-wrap: wrap;
         }
-        .main-header h1 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--header-color);
-            animation: pulse-glow 3s infinite ease-in-out;
+        .nav-link {
+            position: relative; text-transform: uppercase; color: var(--text-color);
+            transition: color 0.3s ease; padding: 0.5rem 0; cursor: pointer;
         }
-        .header-buttons { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+        .nav-link::after {
+            content: ''; position: absolute; width: 100%; height: 2px;
+            bottom: 0; left: 0; background-color: var(--primary-neon);
+            transform: scaleX(0); transform-origin: bottom right;
+            transition: transform 0.3s ease-out; box-shadow: 0 0 8px var(--primary-neon);
+        }
+        .nav-link:hover, .dropdown:hover .nav-link {
+            color: var(--primary-neon); text-shadow: 0 0 5px var(--primary-neon);
+        }
+        .nav-link:hover::after, .dropdown:hover .nav-link::after {
+            transform: scaleX(1); transform-origin: bottom left;
+        }
+        .nav-link.active {
+             color: var(--primary-neon);
+        }
+        .nav-link.active::after {
+            transform: scaleX(1);
+        }
+        .dropdown {
+            position: relative; padding-bottom: 10px; margin-bottom: -10px;
+        }
+        .dropdown-content {
+            display: none; position: absolute; top: 100%; left: 0;
+            background-color: var(--panel-bg); min-width: 160px;
+            border: 1px solid var(--border-color); z-index: 50; padding: 0.5rem 0;
+            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%);
+            animation: fadeIn 0.3s ease-out;
+        }
+        .dropdown:hover .dropdown-content { display: block; }
+        .dropdown-content a {
+            color: var(--text-color); padding: 12px 16px; text-decoration: none;
+            display: block; text-align: left; transition: all 0.2s ease;
+        }
+        .dropdown-content a:hover { background-color: var(--primary-neon); color: var(--bg-color); }
+        .cyber-button {
+            position: relative; padding: 0.5rem 1rem; border: none; background-color: transparent;
+            color: var(--text-color); font-size: 0.8rem; font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase; cursor: pointer; outline: none;
+            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%);
+            transition: color 0.2s ease;
+        }
+        .cyber-button::before, .cyber-button::after {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: -1;
+            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%);
+            transition: all 0.3s ease;
+        }
+        .cyber-button::before { background: var(--panel-bg); border: 1px solid var(--primary-neon); }
+        .cyber-button::after { background: linear-gradient(45deg, var(--secondary-neon), var(--primary-neon)); opacity: 0; }
+        .cyber-button:hover::after { opacity: 1; }
+        .cyber-button:hover { color: var(--bg-color); }
+        .cyber-button:hover .glitch-text { opacity: 1; animation: glitch-animation 0.3s infinite; }
+        .glitch-text {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex;
+            justify-content: center; align-items: center; opacity: 0; color: var(--primary-neon);
+            text-shadow: -1px -1px 0 var(--secondary-neon), 1px 1px 0 var(--primary-neon); z-index: 3;
+        }
         
+        /* --- Основная структура --- */
+        .main-container { display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
         main {
             flex-grow: 1;
             display: grid;
             grid-template-columns: 1fr;
             gap: 1rem;
             padding: 1rem;
+            height: calc(100% - 74px); /* Высота хедера */
         }
         @media (min-width: 768px) {
-            main { 
-                grid-template-columns: 1fr 1fr; 
-                overflow: hidden;
-                height: calc(100vh - 80px); /* Высота хедера */
-            }
-            .main-container {
-                height: 100vh;
-                overflow: hidden;
-            }
+            main { grid-template-columns: 1fr 1fr; }
         }
 
         .panel {
@@ -103,7 +139,6 @@
             flex-direction: column;
             overflow: hidden;
             clip-path: polygon(0 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%);
-            min-height: 400px;
         }
         .panel-header {
             padding: 1rem;
@@ -117,69 +152,6 @@
         .panel-header h2 { font-size: 1.2rem; font-weight: 600; margin: 0; }
         .panel-content { padding: 1rem; overflow-y: auto; flex-grow: 1; }
         
-        /* --- Стили кнопок (Cyberpunk) --- */
-        .cyber-button {
-            position: relative;
-            padding: 0.6rem 1.2rem;
-            border: none;
-            background-color: transparent;
-            color: var(--text-color);
-            font-size: 0.9rem;
-            font-family: 'Orbitron', sans-serif;
-            text-transform: uppercase;
-            cursor: pointer;
-            outline: none;
-            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%);
-            transition: color 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        .cyber-button::before, .cyber-button::after {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            z-index: -1;
-            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%);
-            transition: all 0.3s ease;
-        }
-        .cyber-button::before {
-            background: var(--panel-bg);
-            border: 1px solid var(--primary-neon);
-        }
-        .cyber-button::after {
-             background: linear-gradient(45deg, var(--secondary-neon), var(--primary-neon));
-             opacity: 0;
-        }
-        .cyber-button:hover::after { opacity: 1; }
-        .cyber-button:hover { color: var(--bg-color); }
-        .cyber-button:hover .glitch-text {
-            opacity: 1;
-            animation: glitch-animation 0.3s infinite;
-        }
-        .glitch-text {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            display: flex; justify-content: center; align-items: center;
-            opacity: 0;
-            color: var(--primary-neon);
-            text-shadow: -1px -1px 0 var(--secondary-neon), 1px 1px 0 var(--primary-neon);
-            z-index: 3;
-        }
-        /* Цвета кнопок */
-        .btn-sky::before { border-color: var(--primary-neon); }
-        .btn-sky:hover .glitch-text { color: var(--primary-neon); }
-        .btn-green::before { border-color: var(--green-neon); }
-        .btn-green::after { background: linear-gradient(45deg, var(--secondary-neon), var(--green-neon)); }
-        .btn-green:hover .glitch-text { color: var(--green-neon); }
-        .btn-indigo::before { border-color: var(--indigo-neon); }
-        .btn-indigo::after { background: linear-gradient(45deg, var(--secondary-neon), var(--indigo-neon)); }
-        .btn-indigo:hover .glitch-text { color: var(--indigo-neon); }
-        .btn-red::before { border-color: var(--red-neon); }
-        .btn-red::after { background: linear-gradient(45deg, var(--secondary-neon), var(--red-neon)); }
-        .btn-secondary::before { border-color: var(--secondary-neon); }
-        .btn-secondary::after { background: linear-gradient(45deg, var(--primary-neon), var(--secondary-neon)); }
-        .btn-secondary:hover .glitch-text { color: var(--secondary-neon); }
-
         /* --- Элементы редактора --- */
         .entry-card {
             background-color: rgba(13, 12, 29, 0.7);
@@ -286,60 +258,84 @@
         .modal-buttons { display: flex; justify-content: flex-end; gap: 1rem; }
         
         .hidden-input { display: none; }
-
-        /* --- Адаптивность --- */
-        @media (max-width: 767px) {
-            .main-header {
-                flex-direction: column;
-                align-items: center;
-                gap: 1rem;
-            }
-            .header-buttons {
-                justify-content: center;
-            }
-            .cyber-button {
-                padding: 0.5rem 0.8rem;
-                font-size: 0.8rem;
-            }
-            .panel-header h2 {
-                font-size: 1.1rem;
-            }
-        }
     </style>
 </head>
 <body>
-
     <div class="main-container">
-        <!-- Header -->
-        <header class="main-header">
-            <h1>Lorebook Creator</h1>
-            <div class="header-buttons">
-                <button id="new-lorebook-btn" class="cyber-button btn-sky">
-                    <span class="button-text">Новый Лорбук</span>
-                    <span class="glitch-text">Очистить</span>
-                </button>
-                <label for="import-json" class="cyber-button btn-green">
-                    <span class="button-text">Импорт JSON</span>
-                    <span class="glitch-text">Загрузить</span>
-                </label>
-                <input type="file" id="import-json" class="hidden-input" accept=".json">
-                <button id="export-json-btn" class="cyber-button btn-indigo">
-                    <span class="button-text">Экспорт JSON</span>
-                    <span class="glitch-text">Сохранить</span>
-                </button>
+        <header class="cyber-header p-4 sticky top-0 z-50">
+            <div class="max-w-7xl mx-auto flex justify-between items-center">
+                <a href="index.html" class="text-2xl font-orbitron font-bold text-header-color" style="animation: pulse-glow 3s infinite ease-in-out;">
+                    sugarHUB
+                </a>
+                <div class="flex items-center space-x-4">
+                    <nav id="desktop-nav" class="hidden md:flex items-center space-x-6 md:space-x-8">
+                        <div class="dropdown">
+                            <span class="nav-link font-orbitron active">Конструктор</span>
+                            <div class="dropdown-content">
+                                <a href="creator.html">Лорбук</a>
+                                <a href="#">Персонаж</a>
+                                <a href="#">Другое</a>
+                            </div>
+                        </div>
+                        <a href="reader.html" class="nav-link font-orbitron">Библиотека</a>
+                    </nav>
+                    <button class="cyber-button hidden md:flex">
+                        <span class="button-text">Войти</span>
+                        <span class="glitch-text">Login</span>
+                    </button>
+                    <!-- Hamburger Menu Button -->
+                    <button id="mobile-menu-button" class="md:hidden p-2 text-primary-neon">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                    </button>
+                </div>
+            </div>
+            <!-- Mobile Menu -->
+            <div id="mobile-menu" class="hidden md:hidden bg-panel-bg/95 backdrop-blur-sm">
+                <div>
+                    <button id="mobile-constructor-toggle" class="w-full text-center py-3 border-t border-border-color text-lg font-orbitron flex justify-center items-center">
+                        <span>Конструктор</span>
+                        <svg id="mobile-constructor-arrow" class="w-4 h-4 ml-2 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div id="mobile-submenu" class="hidden bg-bg-color/50">
+                        <a href="creator.html" class="block text-center py-2 text-base font-orbitron text-gray-400 border-t border-border-color/50">Лорбук</a>
+                        <a href="#" class="block text-center py-2 text-base font-orbitron text-gray-400 border-t border-border-color/50">Персонаж</a>
+                        <a href="#" class="block text-center py-2 text-base font-orbitron text-gray-400 border-t border-border-color/50">Другое</a>
+                    </div>
+                </div>
+                <a href="reader.html" class="block text-center py-3 border-t border-border-color text-lg font-orbitron">Библиотека</a>
+                <div class="p-4 border-t border-border-color">
+                     <button class="cyber-button w-full flex">
+                        <span class="button-text">Войти</span>
+                        <span class="glitch-text">Login</span>
+                    </button>
+                </div>
             </div>
         </header>
 
-        <!-- Main Content -->
         <main>
             <!-- Editor Panel -->
             <div id="editor-panel" class="panel">
-                <div class="panel-header">
-                    <h2>Редактор</h2>
-                    <button id="add-entry-btn" class="cyber-button btn-sky">
-                         <span class="button-text">Добавить запись</span>
-                         <span class="glitch-text">Создать</span>
-                    </button>
+                <div class="panel-header flex-wrap gap-2 justify-between">
+                    <h2 class="flex-shrink-0 mr-auto font-orbitron">Редактор</h2>
+                    <div class="flex items-center gap-2 flex-wrap justify-end">
+                        <button id="new-lorebook-btn" class="cyber-button" style="font-size: 0.8rem; padding: 0.5rem 1rem;">
+                            <span class="button-text">Новый</span>
+                            <span class="glitch-text">Сброс</span>
+                        </button>
+                        <label for="import-json" class="cyber-button" style="font-size: 0.8rem; padding: 0.5rem 1rem;">
+                            <span class="button-text">Импорт</span>
+                            <span class="glitch-text">Load</span>
+                        </label>
+                        <input type="file" id="import-json" class="hidden-input" accept=".json">
+                        <button id="export-json-btn" class="cyber-button" style="font-size: 0.8rem; padding: 0.5rem 1rem;">
+                            <span class="button-text">Экспорт</span>
+                            <span class="glitch-text">Save</span>
+                        </button>
+                        <button id="add-entry-btn" class="cyber-button" style="font-size: 0.8rem; padding: 0.5rem 1rem;">
+                             <span class="button-text">Добавить</span>
+                             <span class="glitch-text">Создать</span>
+                        </button>
+                    </div>
                 </div>
                 <div id="entries-container" class="panel-content">
                     <!-- Записи лорбука будут здесь -->
@@ -349,7 +345,7 @@
             <!-- Viewer Panel -->
             <div id="viewer-panel" class="panel">
                 <div class="panel-header">
-                    <h2>Просмотр</h2>
+                    <h2 class="font-orbitron">Просмотр</h2>
                     <div class="viewer-toggle">
                         <button id="view-text-btn" class="active">Текст</button>
                         <button id="view-json-btn">JSON</button>
@@ -377,6 +373,21 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const mobileConstructorToggle = document.getElementById('mobile-constructor-toggle');
+            const mobileSubmenu = document.getElementById('mobile-submenu');
+            const mobileConstructorArrow = document.getElementById('mobile-constructor-arrow');
+
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+
+            mobileConstructorToggle.addEventListener('click', () => {
+                mobileSubmenu.classList.toggle('hidden');
+                mobileConstructorArrow.classList.toggle('rotate-180');
+            });
+            
             const entriesContainer = document.getElementById('entries-container');
             const viewerContent = document.getElementById('viewer-content');
             const addEntryBtn = document.getElementById('add-entry-btn');
@@ -600,7 +611,6 @@
                     try {
                         const json = JSON.parse(e.target.result);
                         if (json && Array.isArray(json.data)) {
-                            // Добавляем недостающие поля с дефолтными значениями
                             lorebookData = json.data.map(entry => ({
                                 key: entry.key || "",
                                 content: entry.content || "",
