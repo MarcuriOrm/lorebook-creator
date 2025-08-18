@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Интерактивный Лорбук - Cyberpunk Edition</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Inter:wght@400&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Cyberpunk Neon (Dark Violet, Neon Cyan, Magenta) -->
+    <!-- Application Structure Plan: A sidebar-based navigation with categories to filter a grid of lore cards. This wiki-like structure is chosen over a linear list to promote user-driven exploration. A search function provides direct access. A file upload button is added for dynamic content. -->
+    <!-- Visualization & Content Choices: Lore entries are presented as HTML cards. The key interaction is filtering via sidebar buttons and a search bar, handled by Vanilla JS. File upload uses FileReader API. Status indicators use Unicode icons. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        :root {
+            --bg-color: #0d0c1d;
+            --panel-bg: #1a1a2e;
+            --border-color: rgba(0, 229, 255, 0.3);
+            --text-color: #e0e0e0;
+            --header-color: #00e5ff;
+            --primary-neon: #00e5ff;
+            --secondary-neon: #ff05f7;
+            --green-neon: #00ff9b;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+        }
+
+        h1, h2, h3, .font-orbitron { font-family: 'Orbitron', sans-serif; }
+
+        @keyframes pulse-glow {
+            0%, 100% { text-shadow: 0 0 5px var(--header-color), 0 0 10px var(--header-color); }
+            50% { text-shadow: 0 0 10px var(--header-color), 0 0 20px var(--header-color); }
+        }
+        
+        @keyframes pulse-border {
+            0%, 100% { border-color: rgba(0, 229, 255, 0.3); }
+            50% { border-color: rgba(0, 229, 255, 0.8); }
+        }
+        
+        @keyframes pulse-border-bottom {
+            0%, 100% { border-bottom-color: rgba(0, 229, 255, 0.3); }
+            50% { border-bottom-color: rgba(0, 229, 255, 0.8); }
+        }
+        
+        @keyframes pulse-border-top {
+            0%, 100% { border-top-color: rgba(0, 229, 255, 0.3); }
+            50% { border-top-color: rgba(0, 229, 255, 0.8); }
+        }
+
+        @keyframes glitch-animation {
+            0% { clip-path: inset(25% 0 50% 0); transform: translate(-3px, 0); }
+            25% { clip-path: inset(5% 0 80% 0); transform: translate(3px, 3px); }
+            50% { clip-path: inset(60% 0 10% 0); transform: translate(-3px, -3px); }
+            75% { clip-path: inset(40% 0 20% 0); transform: translate(3px, 0); }
+            100% { clip-path: inset(25% 0 50% 0); transform: translate(-3px, 3px); }
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #1a1a2e; }
+        ::-webkit-scrollbar-thumb { background: var(--primary-neon); box-shadow: 0 0 5px var(--primary-neon); }
+
+        .main-header h1 {
+            animation: pulse-glow 3s infinite ease-in-out;
+        }
+
+        .cyber-button {
+            position: relative; padding: 0.6rem 1.2rem; border: none; background-color: transparent;
+            color: var(--text-color); font-size: 0.9rem; font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase; cursor: pointer; outline: none;
+            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%);
+            transition: color 0.2s ease; display: flex; align-items: center; gap: 0.5rem; justify-content: center;
+        }
+        .cyber-button::before, .cyber-button::after {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: -1;
+            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%);
+            transition: all 0.3s ease;
+        }
+        .cyber-button::before { background: var(--panel-bg); border: 1px solid var(--green-neon); }
+        .cyber-button::after { background: linear-gradient(45deg, var(--secondary-neon), var(--green-neon)); opacity: 0; }
+        .cyber-button:hover::after { opacity: 1; }
+        .cyber-button:hover { color: var(--bg-color); }
+        .cyber-button:hover .glitch-text { opacity: 1; animation: glitch-animation 0.3s infinite; }
+        .glitch-text {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex;
+            justify-content: center; align-items: center; opacity: 0; color: var(--green-neon);
+            text-shadow: -1px -1px 0 var(--secondary-neon), 1px 1px 0 var(--green-neon); z-index: 3;
+        }
+
+        .category-btn {
+            background-color: transparent; border: 1px solid var(--border-color);
+            color: var(--text-color); padding: 0.5rem; text-align: left;
+            transition: all 0.3s ease;
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+        }
+        .category-btn:hover { border-color: var(--primary-neon); color: var(--primary-neon); }
+        .category-btn.active {
+            background-color: var(--primary-neon); color: var(--bg-color);
+            border-color: var(--primary-neon); font-weight: bold;
+            box-shadow: 0 0 10px var(--primary-neon);
+        }
+
+        input[type="search"] {
+            background-color: var(--bg-color); border: 1px solid var(--border-color);
+            padding: 0.5rem; color: var(--text-color); font-family: 'Inter', sans-serif;
+            outline: none; transition: all 0.3s ease;
+        }
+        input[type="search"]:focus {
+            border-color: var(--primary-neon); box-shadow: 0 0 10px var(--primary-neon);
+        }
+        .hidden-input { display: none; }
+        
+        .panel {
+            background-color: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%);
+            animation: pulse-border 4s infinite ease-in-out;
+        }
+        
+        aside .panel h2 {
+             border-bottom: 1px solid;
+             animation: pulse-glow 3s infinite ease-in-out, pulse-border-bottom 4s infinite ease-in-out;
+        }
+        
+        aside .panel h3 {
+            animation: pulse-glow 3.5s infinite ease-in-out;
+        }
+
+        #lore-grid .lore-card {
+            animation: pulse-border 4.5s infinite ease-in-out;
+        }
+
+        #lore-grid h3 {
+            animation: pulse-glow 4s infinite ease-in-out;
+        }
+        
+        .card-divider {
+            border-top: 1px solid;
+            animation: pulse-border-top 4s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-bg-color text-text-color">
+
+    <div class="max-w-7xl mx-auto p-4 md:p-8">
+        <header class="text-center mb-12 main-header">
+            <h1 class="text-4xl md:text-5xl font-bold text-header-color">Интерактивный Лорбук</h1>
+            <p class="text-lg text-gray-400 mt-2 font-orbitron">Исследование миров</p>
+        </header>
+
+        <div class="flex flex-col md:flex-row gap-8">
+            <!-- Sidebar -->
+            <aside class="w-full md:w-1/4 lg:w-1/5 md:sticky top-8 self-start">
+                <div class="panel p-4">
+                    <h2 class="text-xl font-bold mb-4 pb-2">Навигация</h2>
+                    
+                    <label for="import-json" class="cyber-button w-full mb-4">
+                        <span class="button-text">Загрузить Лорбук</span>
+                        <span class="glitch-text">Импорт</span>
+                    </label>
+                    <input type="file" id="import-json" class="hidden-input" accept=".json">
+                    
+                    <div class="mb-4">
+                        <input type="search" id="search-input" placeholder="Поиск по лору..." class="w-full">
+                    </div>
+                    <h3 class="font-semibold mb-2 font-orbitron">Категории</h3>
+                    <nav id="categories-nav" class="flex flex-col space-y-2">
+                        <!-- Категории будут вставлены сюда -->
+                    </nav>
+                </div>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="w-full md:w-3/4 lg:w-4/5 min-h-[60vh]">
+                <div id="lore-grid" class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                    <!-- Карточки с лором будут вставлены сюда -->
+                </div>
+                <div id="no-results" class="panel text-center p-16">
+                    <p class="text-2xl text-gray-500 font-orbitron">// Данные не загружены //</p>
+                     <p class="text-gray-600 mt-2">Используйте кнопку "Загрузить Лорбук" для начала.</p>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const loreGrid = document.getElementById('lore-grid');
+            const categoriesNav = document.getElementById('categories-nav');
+            const searchInput = document.getElementById('search-input');
+            const importJsonInput = document.getElementById('import-json');
+            const noResults = document.getElementById('no-results');
+
+            let allEntries = [];
+
+            const defaultCategories = {
+                'Персонажи': ["Character"],
+                'Места': ["Place"],
+                'Предметы': ["Item"],
+                'Способности': ["Spell"],
+                'Информация': ["Background Info", "World Info"],
+                'Правила': ["Rule"],
+                'Прочее': ["Other", "Letter"]
+            };
+
+            const renderEntries = (filteredEntries) => {
+                loreGrid.innerHTML = '';
+                if (filteredEntries.length === 0) {
+                    noResults.classList.remove('hidden');
+                    if (allEntries.length === 0) {
+                         noResults.querySelector('p').textContent = '// Данные не загружены //';
+                         noResults.querySelector('p + p').style.display = 'block';
+                    } else {
+                        noResults.querySelector('p').textContent = searchInput.value ? '// Ничего не найдено //' : '// В этой категории нет записей //';
+                        noResults.querySelector('p + p').style.display = 'none';
+                    }
+                } else {
+                    noResults.classList.add('hidden');
+                }
+                filteredEntries.sort((a, b) => a.insertorder - b.insertorder).forEach(entry => {
+                    const card = document.createElement('div');
+                    card.className = 'lore-card bg-panel-bg p-6 border hover:border-primary-neon transition-all duration-300 flex flex-col';
+                    card.style.clipPath = "polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 0 100%)";
+                    
+                    const dividerHtml = entry.alwaysActive ? `<div class="card-divider mt-4 pt-2 text-right text-xs font-semibold text-green-neon">📌 ВСЕГДА АКТИВНО</div>` : '';
+
+                    card.innerHTML = `
+                        <div class="flex-grow">
+                            <h3 class="text-xl font-bold font-orbitron mb-2 text-primary-neon">${entry.key}</h3>
+                            <p class="text-sm text-secondary-neon mb-3 italic">${entry.comment || ''}</p>
+                            <p class="text-text-color leading-relaxed">${entry.content}</p>
+                        </div>
+                        ${dividerHtml}
+                    `;
+                    loreGrid.appendChild(card);
+                });
+            };
+
+            const renderCategories = (entries) => {
+                categoriesNav.innerHTML = '';
+                const allBtn = document.createElement('button');
+                allBtn.className = 'category-btn active';
+                allBtn.textContent = 'Все Записи';
+                allBtn.dataset.category = 'all';
+                categoriesNav.appendChild(allBtn);
+
+                if (entries.length === 0) return;
+
+                const entryCategories = new Set(entries.map(e => e.category).filter(Boolean));
+                const categoriesToDisplay = {};
+
+                Object.keys(defaultCategories).forEach(catName => {
+                    const foundSubCat = defaultCategories[catName].some(subCat => entryCategories.has(subCat));
+                    if(foundSubCat) {
+                        categoriesToDisplay[catName] = defaultCategories[catName];
+                    }
+                });
+                
+                Object.keys(categoriesToDisplay).forEach(categoryName => {
+                    const btn = document.createElement('button');
+                    btn.className = 'category-btn';
+                    btn.textContent = categoryName;
+                    btn.dataset.category = categoryName;
+                    categoriesNav.appendChild(btn);
+                });
+            };
+
+            const filterAndRender = () => {
+                const searchTerm = searchInput.value.toLowerCase();
+                const activeCategoryBtn = document.querySelector('.category-btn.active');
+                const activeCategory = activeCategoryBtn ? activeCategoryBtn.dataset.category : 'all';
+
+                let filteredEntries = allEntries;
+
+                if (activeCategory !== 'all' && defaultCategories[activeCategory]) {
+                    const subCategories = defaultCategories[activeCategory];
+                    filteredEntries = filteredEntries.filter(entry => subCategories.includes(entry.category));
+                }
+
+                if (searchTerm) {
+                    filteredEntries = filteredEntries.filter(entry => 
+                        entry.key.toLowerCase().includes(searchTerm) ||
+                        entry.content.toLowerCase().includes(searchTerm) ||
+                        (entry.comment && entry.comment.toLowerCase().includes(searchTerm)) ||
+                        (entry.secondkey && entry.secondkey.toLowerCase().includes(searchTerm))
+                    );
+                }
+                
+                renderEntries(filteredEntries);
+            };
+
+            const loadLorebook = (data) => {
+                 if (data && Array.isArray(data.data)) {
+                    const processedEntries = data.data.map(entry => ({
+                        ...entry,
+                        category: entry.category || 'Other'
+                    }));
+                    allEntries = processedEntries;
+                    localStorage.setItem('cyber-reader-lorebook', JSON.stringify(allEntries));
+                    renderCategories(allEntries);
+                    filterAndRender();
+                } else {
+                    alert('Ошибка: JSON файл имеет неверную структуру.');
+                    allEntries = [];
+                    renderCategories([]);
+                    renderEntries([]);
+                }
+            };
+            
+            importJsonInput.addEventListener('change', (event) => {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const json = JSON.parse(e.target.result);
+                        loadLorebook(json);
+                    } catch (error) {
+                        alert(`Ошибка при чтении JSON файла: ${error.message}`);
+                    }
+                };
+                reader.readAsText(file);
+                event.target.value = '';
+            });
+            
+            categoriesNav.addEventListener('click', (e) => {
+                if (e.target.classList.contains('category-btn')) {
+                    document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
+                    e.target.classList.add('active');
+                    filterAndRender();
+                }
+            });
+
+            searchInput.addEventListener('input', filterAndRender);
+            
+            function initialize() {
+                const savedData = localStorage.getItem('cyber-reader-lorebook');
+                if (savedData) {
+                    try {
+                        allEntries = JSON.parse(savedData);
+                        renderCategories(allEntries);
+                        filterAndRender();
+                    } catch(e) {
+                        console.error("Ошибка загрузки лорбука из localStorage", e);
+                        allEntries = [];
+                        renderCategories([]);
+                        renderEntries([]);
+                    }
+                } else {
+                    renderCategories([]);
+                    renderEntries([]);
+                }
+            }
+
+            initialize();
+        });
+    </script>
+</body>
+</html>
