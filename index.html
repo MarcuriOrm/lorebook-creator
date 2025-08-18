@@ -123,11 +123,7 @@
 
         /* --- Стили для главной страницы --- */
         .status-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 8px;
+            width: 12px; height: 12px; border-radius: 50%; display: inline-block; margin-right: 8px;
         }
         .status-dot.online { background-color: var(--green-neon); box-shadow: 0 0 8px var(--green-neon); }
         .status-dot.offline { background-color: var(--red-neon); box-shadow: 0 0 8px var(--red-neon); }
@@ -198,8 +194,8 @@
             <a href="index.html" class="text-2xl font-orbitron font-bold text-header-color" style="animation: pulse-glow 3s infinite ease-in-out;">
                 sugarHUB
             </a>
-            <div class="flex items-center space-x-6 md:space-x-8">
-                <nav class="hidden md:flex items-center space-x-6 md:space-x-8">
+            <div class="flex items-center space-x-4">
+                <nav id="desktop-nav" class="hidden md:flex items-center space-x-6 md:space-x-8">
                     <div class="dropdown">
                         <span class="nav-link font-orbitron">Конструктор</span>
                         <div class="dropdown-content">
@@ -210,7 +206,32 @@
                     </div>
                     <a href="reader.html" class="nav-link font-orbitron">Библиотека</a>
                 </nav>
-                <button class="cyber-button">
+                <button class="cyber-button hidden md:flex">
+                    <span class="button-text">Войти</span>
+                    <span class="glitch-text">Login</span>
+                </button>
+                <!-- Hamburger Menu Button -->
+                <button id="mobile-menu-button" class="md:hidden p-2 text-primary-neon">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                </button>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-panel-bg/95 backdrop-blur-sm">
+            <div>
+                <button id="mobile-constructor-toggle" class="w-full text-center py-3 border-t border-border-color text-lg font-orbitron flex justify-center items-center">
+                    <span>Конструктор</span>
+                    <svg id="mobile-constructor-arrow" class="w-4 h-4 ml-2 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                <div id="mobile-submenu" class="hidden bg-bg-color/50">
+                    <a href="creator.html" class="block text-center py-2 text-base font-orbitron text-gray-400 border-t border-border-color/50">Лорбук</a>
+                    <a href="#" class="block text-center py-2 text-base font-orbitron text-gray-400 border-t border-border-color/50">Персонаж</a>
+                    <a href="#" class="block text-center py-2 text-base font-orbitron text-gray-400 border-t border-border-color/50">Другое</a>
+                </div>
+            </div>
+            <a href="reader.html" class="block text-center py-3 border-t border-border-color text-lg font-orbitron">Библиотека</a>
+            <div class="p-4 border-t border-border-color">
+                 <button class="cyber-button w-full flex">
                     <span class="button-text">Войти</span>
                     <span class="glitch-text">Login</span>
                 </button>
@@ -297,8 +318,24 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const serverUrl = 'https://gemini-proxy-4bk2.onrender.com/status';
+            // Mobile menu toggle
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const mobileConstructorToggle = document.getElementById('mobile-constructor-toggle');
+            const mobileSubmenu = document.getElementById('mobile-submenu');
+            const mobileConstructorArrow = document.getElementById('mobile-constructor-arrow');
 
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+
+            mobileConstructorToggle.addEventListener('click', () => {
+                mobileSubmenu.classList.toggle('hidden');
+                mobileConstructorArrow.classList.toggle('rotate-180');
+            });
+
+            // Server status logic
+            const serverUrl = 'https://gemini-proxy-4bk2.onrender.com/status';
             const statusDot = document.getElementById('status-dot');
             const statusText = document.getElementById('status-text');
             const statusUptime = document.getElementById('status-uptime');
